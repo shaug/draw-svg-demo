@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Draw SVG Demo</string>
+    <string name="share">Share</string>
+    <string name="file_authority">joe.amrhein.drawsvgdemo.fileprovider</string>
+</resources>
