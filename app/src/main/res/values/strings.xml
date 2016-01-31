@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Draw SVG Demo</string>
-    <string name="share">Share</string>
+    <string name="share">Share SVG</string>
+    <string name="clear">Clear canvas</string>
     <string name="file_authority">joe.amrhein.drawsvgdemo.fileprovider</string>
     <string name="canvas_empty_message">The canvas is empty.  Try drawing something before sharing a SVG</string>
 </resources>
