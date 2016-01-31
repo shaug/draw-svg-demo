@@ -4,12 +4,15 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.Toast;
 
 import java.io.BufferedWriter;
@@ -48,6 +51,15 @@ public class MainActivity extends AppCompatActivity {
         canvasHeight = pathTrackingView.getHeight();
 
         fileAuthority = getString(R.string.file_authority);
+
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+
+        fab.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                pathTrackingView.removeLastPath();
+            }
+        });
     }
 
 
@@ -62,7 +74,11 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_share:
-                new SaveCanvasToSVGTask().execute(pathTrackingView.getSvgPaths());
+                if (pathTrackingView.isEmpty()) {
+                    Toast.makeText(this, R.string.canvas_empty_message, Toast.LENGTH_SHORT).show();
+                } else {
+                    new SaveCanvasToSVGTask().execute(pathTrackingView.getSvgPaths());
+                }
                 return true;
 
             default:

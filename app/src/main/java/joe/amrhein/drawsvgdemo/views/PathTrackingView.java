@@ -6,7 +6,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
-import android.graphics.Path;
 import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -40,7 +39,6 @@ public class PathTrackingView extends View {
     private RectF dirtyRect;
 
     private Paint paint = new Paint();
-    private Path path = new Path();
     private Bitmap viewBitmap = null;
     private Canvas canvas = null;
 
@@ -74,14 +72,37 @@ public class PathTrackingView extends View {
         svgPaths = new LinkedList<>();
         svgPath = new ArrayList<>();
 
-        path.reset();
-
         if (viewBitmap != null) {
             viewBitmap = null;
             ensureViewBitmap();
         }
 
         setIsEmpty(true);
+
+        invalidate();
+    }
+
+    public void removeLastPath() {
+        if (svgPaths.isEmpty()) {
+            Log.d(TAG, "No stored paths");
+            return;
+        }
+
+        svgPaths.removeLast();
+
+        if (viewBitmap != null) {
+            viewBitmap = null;
+            ensureViewBitmap();
+        }
+
+        List<FloatingPoint> aPath;
+        for (int i = 0; i < svgPaths.size(); i++) {
+            aPath = svgPaths.get(i);
+            points.clear();
+            for (int j = 0; j < aPath.size(); j++) {
+                addPoint(aPath.get(j));
+            }
+        }
 
         invalidate();
     }
@@ -102,7 +123,6 @@ public class PathTrackingView extends View {
                 getParent().requestDisallowInterceptTouchEvent(true);
                 points.clear();
                 svgPath = new ArrayList<>();
-                path.moveTo(eventX, eventY);
                 lastTouchX = eventX;
                 lastTouchY = eventY;
                 addPoint(p);
@@ -121,7 +141,6 @@ public class PathTrackingView extends View {
                 setIsEmpty(false);
                 svgPath.add(p);
                 svgPaths.add(svgPath);
-                Log.d(TAG, "svgPath: " + svgPath.size() + "\tsvgPaths: " + svgPaths.size());
                 break;
 
             default:
