@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.util.AttributeSet;
@@ -63,9 +62,11 @@ public class PathTrackingView extends View {
         clear();
     }
 
+
     public LinkedList<List<FloatingPoint>> getSvgPaths() {
         return svgPaths;
     }
+
 
     public void clear() {
         points = new ArrayList<>();
@@ -81,6 +82,7 @@ public class PathTrackingView extends View {
 
         invalidate();
     }
+
 
     public void removeLastPath() {
         if (svgPaths.isEmpty()) {
@@ -167,140 +169,6 @@ public class PathTrackingView extends View {
 
     public boolean isEmpty() {
         return isEmpty;
-    }
-
-
-    public Bitmap getViewBitmap() {
-        Bitmap originalBitmap = getTransparentViewBitmap();
-        Bitmap whiteBgBitmap = Bitmap
-                .createBitmap(originalBitmap.getWidth(), originalBitmap.getHeight(),
-                        Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(whiteBgBitmap);
-        canvas.drawColor(Color.WHITE);
-        canvas.drawBitmap(originalBitmap, 0, 0, null);
-        return whiteBgBitmap;
-    }
-
-
-    public void setViewBitmap(Bitmap signature) {
-        clear();
-        ensureViewBitmap();
-
-        RectF tempSrc = new RectF();
-        RectF tempDst = new RectF();
-
-        int dWidth = signature.getWidth();
-        int dHeight = signature.getHeight();
-        int vWidth = getWidth();
-        int vHeight = getHeight();
-
-        // Generate the required transform.
-        tempSrc.set(0, 0, dWidth, dHeight);
-        tempDst.set(0, 0, vWidth, vHeight);
-
-        Matrix drawMatrix = new Matrix();
-        drawMatrix.setRectToRect(tempSrc, tempDst, Matrix.ScaleToFit.CENTER);
-
-        Canvas canvas = new Canvas(viewBitmap);
-        canvas.drawBitmap(signature, drawMatrix, null);
-        setIsEmpty(false);
-        invalidate();
-    }
-
-
-    public Bitmap getTransparentViewBitmap() {
-        ensureViewBitmap();
-        return viewBitmap;
-    }
-
-
-    public Bitmap getTransparentViewBitmap(boolean trimBlankSpace) {
-
-        if (!trimBlankSpace) {
-            return getTransparentViewBitmap();
-        }
-
-        ensureViewBitmap();
-
-        int imgHeight = viewBitmap.getHeight();
-        int imgWidth = viewBitmap.getWidth();
-
-        int backgroundColor = Color.TRANSPARENT;
-
-        int xMin = Integer.MAX_VALUE,
-                xMax = Integer.MIN_VALUE,
-                yMin = Integer.MAX_VALUE,
-                yMax = Integer.MIN_VALUE;
-
-        boolean foundPixel = false;
-
-        // Find xMin
-        for (int x = 0; x < imgWidth; x++) {
-            boolean stop = false;
-            for (int y = 0; y < imgHeight; y++) {
-                if (viewBitmap.getPixel(x, y) != backgroundColor) {
-                    xMin = x;
-                    stop = true;
-                    foundPixel = true;
-                    break;
-                }
-            }
-            if (stop) {
-                break;
-            }
-        }
-
-        // Image is empty...
-        if (!foundPixel) {
-            return null;
-        }
-
-        // Find yMin
-        for (int y = 0; y < imgHeight; y++) {
-            boolean stop = false;
-            for (int x = xMin; x < imgWidth; x++) {
-                if (viewBitmap.getPixel(x, y) != backgroundColor) {
-                    yMin = y;
-                    stop = true;
-                    break;
-                }
-            }
-            if (stop) {
-                break;
-            }
-        }
-
-        // Find xMax
-        for (int x = imgWidth - 1; x >= xMin; x--) {
-            boolean stop = false;
-            for (int y = yMin; y < imgHeight; y++) {
-                if (viewBitmap.getPixel(x, y) != backgroundColor) {
-                    xMax = x;
-                    stop = true;
-                    break;
-                }
-            }
-            if (stop) {
-                break;
-            }
-        }
-
-        // Find yMax
-        for (int y = imgHeight - 1; y >= yMin; y--) {
-            boolean stop = false;
-            for (int x = xMin; x <= xMax; x++) {
-                if (viewBitmap.getPixel(x, y) != backgroundColor) {
-                    yMax = y;
-                    stop = true;
-                    break;
-                }
-            }
-            if (stop) {
-                break;
-            }
-        }
-
-        return Bitmap.createBitmap(viewBitmap, xMin, yMin, xMax - xMin, yMax - yMin);
     }
 
 
@@ -426,8 +294,7 @@ public class PathTrackingView extends View {
 
     private void ensureViewBitmap() {
         if (viewBitmap == null) {
-            viewBitmap = Bitmap
-                    .createBitmap(getWidth(), getHeight(), Bitmap.Config.ARGB_8888);
+            viewBitmap = Bitmap.createBitmap(getWidth(), getHeight(), Bitmap.Config.ARGB_8888);
             canvas = new Canvas(viewBitmap);
         }
     }
