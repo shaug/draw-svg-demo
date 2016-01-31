@@ -46,9 +46,6 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         pathTrackingView = (PathTrackingView) findViewById(R.id.canvas);
-        //TODO possible reload if screen rotates
-        canvasWidth = pathTrackingView.getWidth();
-        canvasHeight = pathTrackingView.getHeight();
 
         fileAuthority = getString(R.string.file_authority);
 
@@ -60,6 +57,14 @@ public class MainActivity extends AppCompatActivity {
                 pathTrackingView.removeLastPath();
             }
         });
+    }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        canvasWidth = pathTrackingView.getWidth();
+        canvasHeight = pathTrackingView.getHeight();
     }
 
 
