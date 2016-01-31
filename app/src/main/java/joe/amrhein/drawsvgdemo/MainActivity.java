@@ -122,7 +122,6 @@ public class MainActivity extends AppCompatActivity {
             }
 
             String svgContents = SVGSerializer.serializeToSVG(canvasWidth, canvasHeight, params[0]);
-            Log.d(TAG, svgContents);
 
             if (svgContents == null) {
                 return null;

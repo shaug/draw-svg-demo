@@ -97,12 +97,16 @@ public class PathTrackingView extends View {
             ensureViewBitmap();
         }
 
-        List<FloatingPoint> aPath;
-        for (int i = 0; i < svgPaths.size(); i++) {
-            aPath = svgPaths.get(i);
-            points.clear();
-            for (int j = 0; j < aPath.size(); j++) {
-                addPoint(aPath.get(j));
+        if (svgPaths.isEmpty()) {
+            setIsEmpty(true);
+        } else {
+            List<FloatingPoint> aPath;
+            for (int i = 0; i < svgPaths.size(); i++) {
+                aPath = svgPaths.get(i);
+                points.clear();
+                for (int j = 0; j < aPath.size(); j++) {
+                    addPoint(aPath.get(j));
+                }
             }
         }
 
